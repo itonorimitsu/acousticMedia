@@ -50,7 +50,6 @@ def createRectangularWave(A, f0, fs, length, n):
     rectangular_bin = struct.pack("h" * len(rectangular_wave), *rectangular_wave)
     return rectangular_bin
 
-# ここまで
 
 """ノコギリ波の生成"""
 def createSawtoothWave(A, f0, fs, length, n):
@@ -59,13 +58,11 @@ def createSawtoothWave(A, f0, fs, length, n):
         s = 0.0
         for k in range(1, n):
             s += (A / k) * np.sin(2 * np.pi * k * f0 * i / fs)
-
-        if s > 1.0:  s = 1.0
-        if s < -1.0: s = -1.0
         data.append(s)
-    data = [int(x * 32767.0) for x in data]
-    data = struct.pack("h" * len(data), *data)
-    return data
+
+    sawtooth_wave = [int(x * 32767.0) for x in data]
+    sawtoorh_bin = struct.pack("h" * len(sawtooth_wave), *sawtooth_wave)
+    return sawtoorh_bin
 
 
 
@@ -106,16 +103,16 @@ if __name__ == "__main__" :
     # 各波形のデータ作成
     data_sin = createSinWave(A, f0, fs, length)
     data_triangle = createTriangleWave(A_half, f0, fs, length, n)
-    # data_rectangular = createRectangularWave(A_half, f0, fs, length, n)
-    # data_sawtooth = createSawtoothWave(A_half, f0, fs, length, n)
+    data_rectangular = createRectangularWave(A_half, f0, fs, length, n)
+    data_sawtooth = createSawtoothWave(A_half, f0, fs, length, n)
     # waveファイルに出力
-    # save("output_sin.wav", data_sin)
-    # save("triangle.wav", data_triangle)
-    # save("rectangular.wav", data_rectangular)
-    # save("sawtooth.wav", data_sawtooth)
+    save("output_sin.wav", data_sin)
+    save("triangle.wav", data_triangle)
+    save("rectangular.wav", data_rectangular)
+    save("sawtooth.wav", data_sawtooth)
     # 音声出力を行う
     play(data_sin, fs, 16)
     play(data_triangle, fs, 16)
-    # play(data_rectangular, 8000, 16)
-    # play(data_sawtooth, 8000, 16)
+    play(data_rectangular, fs, 16)
+    play(data_sawtooth, fs, 16)
 
