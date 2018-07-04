@@ -14,26 +14,17 @@ def createSinWave(A, f0, fs, length):
 
     sin_bin = struct.pack("h" * len(sin_wave), *sin_wave)
 
-    # plot(data[0:100]); show()
     return sin_bin
 
 """三角波の作成"""
 def createTriangleWave(A, f0, fs, length, n):
     data = []
-    
-    # for i in arange(length * fs):
-    #     s = 0.0
-    #     for k in range(1, n):
-    #         s += (-1)**k * (A / (2 * k + 1)**2) * np.sin((2 * k + 1) * 2 * np.pi * f0 * i / fs)
-    #     data.append(s)
 
-    ## 以下4行程度はtime変数を用いて計算を行なった結果
     time  = np.arange(0, fs * length)
     calcWave = 0.0
     for i in arange(1, n):
         calcWave += (-1)**i * (A / (2 * i + 1)**2) * np.sin((2 * i + 1) * 2 * np.pi * f0 * time / fs)
 
-    # triangle_wave = [int(x * 32767.0) for x in data]
     triangle_wave = [int(x * 32767.0) for x in calcWave]
     triangle_bin = struct.pack("h" * len(triangle_wave), *triangle_wave)
 
@@ -42,13 +33,6 @@ def createTriangleWave(A, f0, fs, length, n):
 
 """矩形波の作成"""
 def createRectangularWave(A, f0, fs, length, n):
-    # data = []
-    # for i in arange(length * fs):
-    #     s = 0.0
-    #     for k in arange(1, n):
-    #         s += (A / (2*k-1)) * np.sin((2*k-1) * 2 * np.pi * f0 * i / fs)
-        
-    #     data.append(s)
 
     time  = np.arange(0, fs * length)
     calcWave = 0.0
@@ -62,12 +46,6 @@ def createRectangularWave(A, f0, fs, length, n):
 
 """ノコギリ波の生成"""
 def createSawtoothWave(A, f0, fs, length, n):
-    # data = []
-    # for i in arange(length * fs):
-    #     s = 0.0
-    #     for k in range(1, n):
-    #         s += (A / k) * np.sin(2 * np.pi * k * f0 * i / fs)
-    #     data.append(s)
 
     time  = np.arange(0, fs * length)
     calcWave = 0.0
@@ -121,8 +99,7 @@ if __name__ == "__main__" :
     data_sawtooth = createSawtoothWave(A_half, f0, fs, length, n)
     # waveファイルに出力
     save("output_sin.wav", data_sin, fs)
-    save("triangle.wav", data_triangle, fs)   ### こっちはfor i in arange(0, length * fs)の出力ファイル
-    # save("triangle2.wav", data_triangle)  ### こっちはtime = range(0, length * fs)の出力ファイル
+    save("triangle.wav", data_triangle, fs)
     save("rectangular.wav", data_rectangular, fs)
     save("sawtooth.wav", data_sawtooth, fs)
     # 音声出力を行う
