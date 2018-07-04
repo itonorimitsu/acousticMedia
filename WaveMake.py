@@ -21,15 +21,20 @@ def createSinWave(A, f0, fs, length):
 def createTriangleWave(A, f0, fs, length, n):
     data = []
     
-    time = np.arange(0, fs * length)
-    
-    for i in arange(length * fs):
-        s = 0.0
-        for k in range(1, n):
-            s += (-1)**k * (A / (2 * k + 1)**2) * np.sin((2 * k + 1) * 2 * np.pi * f0 * i / fs)
-        data.append(s)
+    # for i in arange(length * fs):
+    #     s = 0.0
+    #     for k in range(1, n):
+    #         s += (-1)**k * (A / (2 * k + 1)**2) * np.sin((2 * k + 1) * 2 * np.pi * f0 * i / fs)
+    #     data.append(s)
 
-    triangle_wave = [int(x * 32767.0) for x in data]
+    ## 以下4行程度はtime変数を用いて計算を行なった結果
+    time  = np.arange(0, fs * length)
+    calcWave = 0.0
+    for i in arange(1, n):
+        calcWave += (-1)**i * (A / (2 * i + 1)**2) * np.sin((2 * i + 1) * 2 * np.pi * f0 * time / fs)
+
+    # triangle_wave = [int(x * 32767.0) for x in data]
+    triangle_wave = [int(x * 32767.0) for x in calcWave]
     triangle_bin = struct.pack("h" * len(triangle_wave), *triangle_wave)
 
     return triangle_bin
@@ -37,30 +42,39 @@ def createTriangleWave(A, f0, fs, length, n):
 
 """矩形波の作成"""
 def createRectangularWave(A, f0, fs, length, n):
-    data = []
-
-    for i in arange(length * fs):
-        s = 0.0
-        for k in arange(1, n):
-            s += (A / (2*k-1)) * np.sin((2*k-1) * 2 * np.pi * f0 * i / fs)
+    # data = []
+    # for i in arange(length * fs):
+    #     s = 0.0
+    #     for k in arange(1, n):
+    #         s += (A / (2*k-1)) * np.sin((2*k-1) * 2 * np.pi * f0 * i / fs)
         
-        data.append(s)
+    #     data.append(s)
 
-    rectangular_wave = [int(x * 32767.0) for x in data]
+    time  = np.arange(0, fs * length)
+    calcWave = 0.0
+    for i in arange(1, n):
+        calcWave += (A / (2 * i - 1)) * np.sin((2 * i - 1) * 2 * np.pi * f0 * time / fs)
+
+    rectangular_wave = [int(x * 32767.0) for x in calcWave]
     rectangular_bin = struct.pack("h" * len(rectangular_wave), *rectangular_wave)
     return rectangular_bin
 
 
 """ノコギリ波の生成"""
 def createSawtoothWave(A, f0, fs, length, n):
-    data = []
-    for i in arange(length * fs):
-        s = 0.0
-        for k in range(1, n):
-            s += (A / k) * np.sin(2 * np.pi * k * f0 * i / fs)
-        data.append(s)
+    # data = []
+    # for i in arange(length * fs):
+    #     s = 0.0
+    #     for k in range(1, n):
+    #         s += (A / k) * np.sin(2 * np.pi * k * f0 * i / fs)
+    #     data.append(s)
 
-    sawtooth_wave = [int(x * 32767.0) for x in data]
+    time  = np.arange(0, fs * length)
+    calcWave = 0.0
+    for i in arange(1, n):
+        calcWave += (A / i) * np.sin(2 * np.pi * i * f0 * time / fs)
+
+    sawtooth_wave = [int(x * 32767.0) for x in calcWave]
     sawtoorh_bin = struct.pack("h" * len(sawtooth_wave), *sawtooth_wave)
     return sawtoorh_bin
 
@@ -82,9 +96,9 @@ def play (data, fs, bit):
     p.terminate()
 
 
-def save(filename, data):
+def save(filename, data, fs):
     w = wave.Wave_write(filename)
-    p = (1, 2, 8000, len(data), 'NONE', 'not compressed')
+    p = (1, 2, fs, len(data), 'NONE', 'not compressed')
     w.setparams(p)
     w.writeframes(data)
     w.close()
@@ -106,10 +120,11 @@ if __name__ == "__main__" :
     data_rectangular = createRectangularWave(A_half, f0, fs, length, n)
     data_sawtooth = createSawtoothWave(A_half, f0, fs, length, n)
     # waveファイルに出力
-    save("output_sin.wav", data_sin)
-    save("triangle.wav", data_triangle)
-    save("rectangular.wav", data_rectangular)
-    save("sawtooth.wav", data_sawtooth)
+    save("output_sin.wav", data_sin, fs)
+    save("triangle.wav", data_triangle, fs)   ### こっちはfor i in arange(0, length * fs)の出力ファイル
+    # save("triangle2.wav", data_triangle)  ### こっちはtime = range(0, length * fs)の出力ファイル
+    save("rectangular.wav", data_rectangular, fs)
+    save("sawtooth.wav", data_sawtooth, fs)
     # 音声出力を行う
     play(data_sin, fs, 16)
     play(data_triangle, fs, 16)
