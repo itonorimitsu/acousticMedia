@@ -58,7 +58,7 @@ def createSawtoothWave(A, f0, fs, length, n):
 
 
 
-def play (data, fs, bit):
+def play (data, fs):
     p = pyaudio.PyAudio()
     stream = p.open(format=pyaudio.paInt16, channels = 1, rate = int(fs), output = True)
     chunk = 1024
@@ -98,13 +98,13 @@ if __name__ == "__main__" :
     data_rectangular = createRectangularWave(A_half, f0, fs, length, n)
     data_sawtooth = createSawtoothWave(A_half, f0, fs, length, n)
     # waveファイルに出力
-    save("output_sin.wav", data_sin, fs)
-    save("triangle.wav", data_triangle, fs)
-    save("rectangular.wav", data_rectangular, fs)
-    save("sawtooth.wav", data_sawtooth, fs)
+    save("sin_5000_3.wav", data_sin, fs)
+    save("triangle_5000_3.wav", data_triangle, fs)
+    save("rectangular_5000_3.wav", data_rectangular, fs)
+    save("sawtooth_5000_3.wav", data_sawtooth, fs)
     # 音声出力を行う
-    play(data_sin, fs, 16)
-    play(data_triangle, fs, 16)
-    play(data_rectangular, fs, 16)
-    play(data_sawtooth, fs, 16)
+    play(data_sin, fs)
+    play(data_triangle, fs)
+    play(data_rectangular, fs)
+    play(data_sawtooth, fs)
 
